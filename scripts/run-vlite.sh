@@ -21,16 +21,25 @@ if [[ ! -f "${jar_path}" ]]; then
   exit 1
 fi
 
-if command -v ss >/dev/null 2>&1 && ss -H -ltn "sport = :${DEFAULT_PORT}" | grep -q .; then
-  echo "Error: port ${DEFAULT_PORT} is already in use." >&2
-  echo "Stop the conflicting service, or change VLite's port in its settings before running it again." >&2
-  exit 1
-fi
-
 mkdir -p "${data_dir}/Presets"
 
 if [[ ! -f "${data_dir}/Presets/port.txt" ]]; then
   printf '%s' "${DEFAULT_PORT}" > "${data_dir}/Presets/port.txt"
+fi
+
+configured_port="$(<"${data_dir}/Presets/port.txt")"
+
+if [[ ! "${configured_port}" =~ ^[0-9]+$ ]] ||
+  (( ${#configured_port} > 5 )) ||
+  (( 10#${configured_port} < 1 || 10#${configured_port} > 65535 )); then
+  echo "Error: invalid port '${configured_port}' in ${data_dir}/Presets/port.txt." >&2
+  exit 1
+fi
+
+if command -v ss >/dev/null 2>&1 && ss -H -ltn "sport = :${configured_port}" | grep -q .; then
+  echo "Error: port ${configured_port} is already in use." >&2
+  echo "Stop the conflicting service, or change VLite's port in its settings before running it again." >&2
+  exit 1
 fi
 
 if [[ ! -f "${data_dir}/Presets/password.txt" ]]; then

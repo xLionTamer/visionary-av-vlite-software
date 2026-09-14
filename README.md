@@ -30,7 +30,7 @@ interfaces and multicast discovery without container networking. VLite's web
 interface is normally available in Chrome at [http://127.0.0.1:8080](http://127.0.0.1:8080).
 
 Persistent VLite state, including presets and the selected network interface, is
-stored in `vlite-data/` and is ignored by Git. The helper exits if port 8080 is
-already in use; choose a free port in VLite's settings before its next launch if
-you need to change it. On the first launch it creates the VLite defaults: port
-`8080` and web-interface password `admin`.
+stored in `vlite-data/` and is ignored by Git. The helper exits if VLite's
+configured port is already in use; choose a free port in VLite's settings before
+its next launch if you need to change it. On the first launch it creates the
+VLite defaults: port `8080` and web-interface password `admin`.
