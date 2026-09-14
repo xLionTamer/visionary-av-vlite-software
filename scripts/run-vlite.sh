@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly VERSION="3.1910.2"
+readonly DEFAULT_PORT="8080"
+readonly JAR_RELATIVE_PATH="VLite-${VERSION}_Software__Release-Notes/VLite-${VERSION}_Software_&_Release-Notes/VLite_5K_${VERSION//./_}.jar"
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+jar_path="${repo_root}/${JAR_RELATIVE_PATH}"
+data_dir="${VLITE_DATA_DIR:-${repo_root}/vlite-data}"
+
+if ! command -v mise >/dev/null 2>&1; then
+  echo "Error: install mise before running VLite." >&2
+  exit 1
+fi
+
+if [[ ! -f "${jar_path}" ]]; then
+  echo "Error: VLite JAR not found at ${jar_path}." >&2
+  echo "Run ./scripts/download-vlite.sh first." >&2
+  exit 1
+fi
+
+if command -v ss >/dev/null 2>&1 && ss -H -ltn "sport = :${DEFAULT_PORT}" | grep -q .; then
+  echo "Error: port ${DEFAULT_PORT} is already in use." >&2
+  echo "Stop the conflicting service, or change VLite's port in its settings before running it again." >&2
+  exit 1
+fi
+
+mkdir -p "${data_dir}/Presets"
+
+if [[ ! -f "${data_dir}/Presets/port.txt" ]]; then
+  printf '%s' "${DEFAULT_PORT}" > "${data_dir}/Presets/port.txt"
+fi
+
+if [[ ! -f "${data_dir}/Presets/password.txt" ]]; then
+  printf '%s' "admin" > "${data_dir}/Presets/password.txt"
+fi
+
+cd "${data_dir}"
+exec mise exec -- java -jar "${jar_path}"

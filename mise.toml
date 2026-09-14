@@ -1,0 +1,5 @@
+[tool_config]
+locked = true
+
+[tools]
+java = "temurin-8"

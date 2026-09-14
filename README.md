@@ -14,28 +14,19 @@ The script requires `curl` (or `wget`) and `unzip`. It stores the release archiv
 and extracted files at the repository root; both are ignored by Git. Re-run it to
 replace the extracted release with a fresh copy.
 
-## Run VLite with Podman
+## Run VLite with mise
 
-VLite requires Java 8, but it can run in a rootless Podman container so no Java
-runtime is installed on the host. The container displays the Swing application
-through the host X11 display (including XWayland on a Wayland desktop), while
-Chrome continues to run on the host.
-
-Build the local image after downloading the software:
+VLite runs with the project-managed Temurin Java 8 installation supplied by
+[mise](https://mise.jdx.dev/). Install the locked tool and launch VLite with:
 
 ```sh
-./scripts/build-vlite-container.sh
+mise trust
+mise install --locked
+./scripts/run-vlite.sh
 ```
 
-Start VLite with:
-
-```sh
-./scripts/run-vlite-container.sh
-```
-
-The run helper requires `podman`, an active X11-compatible desktop session, and
-an Xauthority cookie. It uses host networking because VLite discovers endpoints
-with multicast and must enumerate the physical network interfaces. VLite's web
+The application runs directly on the host, so it can use the physical network
+interfaces and multicast discovery without container networking. VLite's web
 interface is normally available in Chrome at [http://127.0.0.1:8080](http://127.0.0.1:8080).
 
 Persistent VLite state, including presets and the selected network interface, is
