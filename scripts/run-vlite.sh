@@ -46,5 +46,7 @@ if [[ ! -f "${data_dir}/Presets/password.txt" ]]; then
   printf '%s' "admin" > "${data_dir}/Presets/password.txt"
 fi
 
+java_path="$(mise -C "${repo_root}" which java)"
+
 cd "${data_dir}"
-exec mise exec -- java -jar "${jar_path}"
+exec "${java_path}" -jar "${jar_path}"
